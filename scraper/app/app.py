@@ -7,6 +7,7 @@ from backports.zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 from github import Github
 from github.GithubException import GithubException
+from collections import OrderedDict
 
 # logging.config.fileConfig("logging.ini", disable_existing_loggers=False)
 # logger = logging.getLogger("github_scraper")
@@ -39,8 +40,43 @@ def get_languages() -> None:
 
 
 def run() -> None:
-    commit_stats_days: Dict[str, int] = {}
-    commit_stats_hours: Dict[int, int] = {}
+    commit_stats_days: OrderedDict[str, int] = OrderedDict(
+        {
+            "Sunday": 0,
+            "Monday": 0,
+            "Tuesday": 0,
+            "Wednesday": 0,
+            "Thursday": 0,
+            "Friday": 0,
+            "Saturday": 0,
+        }
+    )
+    commit_stats_hours: Dict[int, int] = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        7: 0,
+        8: 0,
+        9: 0,
+        10: 0,
+        11: 0,
+        12: 0,
+        13: 0,
+        14: 0,
+        15: 0,
+        16: 0,
+        17: 0,
+        18: 0,
+        19: 0,
+        20: 0,
+        21: 0,
+        22: 0,
+        23: 0,
+    }
     sum_commits: int = 0
     my_names: List[str] = ["gpnn", "Gordon", "Gordon Pham-Nguyen", "gordonpn"]
     usernames: Set[str] = set()
