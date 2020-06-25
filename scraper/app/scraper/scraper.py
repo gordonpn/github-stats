@@ -12,6 +12,20 @@ from github.GithubException import GithubException
 logger = logging.getLogger("github_scraper")
 
 
+def get_day_string(date: datetime) -> str:
+    day_mapping: Dict[int, str] = {
+        0: "Monday",
+        1: "Tuesday",
+        2: "Wednesday",
+        3: "Thursday",
+        4: "Friday",
+        5: "Saturday",
+        6: "Sunday",
+    }
+
+    return day_mapping[date.weekday()]
+
+
 class GithubScraper:
     def __init__(self) -> None:
         load_dotenv(verbose=True)
@@ -96,7 +110,7 @@ class GithubScraper:
                     local_aware = this_date_aware.astimezone(
                         ZoneInfo("America/Montreal")
                     )
-                    this_day: str = self.get_day_string(local_aware)
+                    this_day: str = get_day_string(local_aware)
                     commit_stats_days[this_day] = commit_stats_days.get(this_day, 0) + 1
                     commit_stats_hours[local_aware.hour] = (
                         commit_stats_hours.get(local_aware.hour, 0) + 1
@@ -110,15 +124,10 @@ class GithubScraper:
         logger.info(f"Returning {commit_stats_hours=}")
         return commit_stats_days, commit_stats_hours
 
-    def get_day_string(self, date: datetime) -> str:
-        day_mapping: Dict[int, str] = {
-            0: "Monday",
-            1: "Tuesday",
-            2: "Wednesday",
-            3: "Thursday",
-            4: "Friday",
-            5: "Saturday",
-            6: "Sunday",
-        }
 
-        return day_mapping[date.weekday()]
+def run_commits() -> None:
+    pass
+
+
+def run_languages() -> None:
+    pass

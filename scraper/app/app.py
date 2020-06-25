@@ -5,16 +5,20 @@ from logging.config import fileConfig
 
 import schedule
 
+from app.scraper import scraper
+
 logging.config.fileConfig("logging.ini", disable_existing_loggers=False)
 logger = logging.getLogger("github_scraper")
 
 
 def update_commits() -> None:
     logger.debug("Running commits update job")
+    scraper.run_commits()
 
 
 def update_languages() -> None:
     logger.debug("Running language update job")
+    scraper.run_languages()
 
 
 def run_schedule() -> None:
