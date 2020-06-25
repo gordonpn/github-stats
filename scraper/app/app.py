@@ -1,21 +1,21 @@
+import logging
 import os
-import pprint
+from collections import OrderedDict
 from datetime import datetime
+from logging.config import fileConfig
 from typing import Dict, List, Set
 
 from backports.zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 from github import Github
 from github.GithubException import GithubException
-from collections import OrderedDict
 
-# logging.config.fileConfig("logging.ini", disable_existing_loggers=False)
-# logger = logging.getLogger("github_scraper")
+logging.config.fileConfig("logging.ini", disable_existing_loggers=False)
+logger = logging.getLogger("github_scraper")
 
 not_my_repos: List[str] = ["2019", "2020", "cusec.github.io"]
 load_dotenv(verbose=True)
 g = Github(os.getenv("GITHUB_TOKEN"))
-pp = pprint.PrettyPrinter(indent=4)
 
 
 def get_languages() -> None:
@@ -31,15 +31,15 @@ def get_languages() -> None:
                 sum_of_bytes += bytes_of_code
                 language_stats[lang] = language_stats.get(lang, 0) + bytes_of_code
         except GithubException as e:
-            print(str(e))
+            logger.info(str(e))
 
     for lang, total_bytes in language_stats.items():
         language_percentages[lang] = (total_bytes / sum_of_bytes) * 100
 
-    pp.pprint(language_percentages)
+    logger.info(language_percentages)
 
 
-def run() -> None:
+def get_commits() -> None:
     commit_stats_days: OrderedDict[str, int] = OrderedDict(
         {
             "Sunday": 0,
@@ -100,12 +100,16 @@ def run() -> None:
                     commit_stats_hours.get(local_aware.hour, 0) + 1
                 )
         except GithubException as e:
-            print(str(e))
+            logger.info(str(e))
 
-    pp.pprint(commit_stats_days)
-    pp.pprint(commit_stats_hours)
-    print(f"Usernames found in commits {usernames}")
-    print(f"Total number of commits: {sum_commits}")
+    logger.info(commit_stats_days)
+    logger.info(commit_stats_hours)
+    logger.info(f"Usernames found in commits {usernames}")
+    logger.info(f"Total number of commits: {sum_commits}")
+
+
+def run() -> None:
+    pass
 
 
 def get_day_string(date: datetime) -> str:
