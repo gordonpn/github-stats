@@ -1,8 +1,9 @@
+import datetime
 import logging
 import os
-from typing import Any
+from typing import Any, Dict
 
-import psycopg2
+from pymongo import MongoClient
 
 logger = logging.getLogger("github_scraper")
 
@@ -17,43 +18,35 @@ class Database:
         return cls.instance
 
     def __init__(self) -> None:
-        self.db_name = os.getenv("POSTGRES_NONROOT_DB")
-        self.username = os.getenv("POSTGRES_NONROOT_USER")
-        self.password = os.getenv("POSTGRES_NONROOT_PASSWORD")
-        self.host = os.getenv("POSTGRES_HOST", "postgres")
+        self.db_name = os.getenv("MONGO_INITDB_DATABASE")
+        self.username = os.getenv("MONGO_NON_ROOT_USERNAME")
+        self.password = os.getenv("MONGO_NON_ROOT_PASSWORD")
+        self.host = os.getenv("MONGODB_HOST", "mongodb")
         self.connection = self.connect()
-        self.cursor = self.connection.cursor()
 
     def connect(self) -> Any:
-        try:
-            connection = psycopg2.connect(
-                user=self.username,
-                password=self.password,
-                host=self.host,
-                port="5432",
-                database=self.db_name,
-            )
-            cursor = connection.cursor()
-            cursor.execute("SELECT version();")
-            record = cursor.fetchone()
-            logger.debug(f"You are connected to: {record}")
-            return connection
+        logger.debug("Making connection to mongodb")
+        uri: str = f"mongodb://{self.username}:{self.password}@{self.host}:27017/{self.db_name}"
+        connection = MongoClient(uri)
+        return connection[self.db_name]
 
-        except (Exception, psycopg2.Error) as e:
-            logger.error("Error while connecting to PostgreSQL")
-            logger.error(str(e))
+    def save_commits(self, days, hours: Dict[str, int]) -> None:
+        logger.debug("Insert commits per days")
+        collection = self.connection.collection["commits_per_days"]
+        recorded_time = datetime.datetime.utcnow()
+        result = collection.insert_one(document={"time": recorded_time, "data": days})
+        logger.debug(f"Insertion ID: {result.inserted_id}")
+        logger.debug("Insert commits per hours")
+        collection = self.connection.collection["commits_per_hours"]
+        recorded_time = datetime.datetime.utcnow()
+        result = collection.insert_one(document={"time": recorded_time, "data": hours})
+        logger.debug(f"Insertion ID: {result.inserted_id}")
 
-    def close(self) -> None:
-        try:
-            self.connection.cursor.close()
-            self.connection.close()
-            logger.debug("PostgreSQL connection is closed")
-        except Exception as e:
-            logger.error("Error while closing to PostgreSQL")
-            logger.error(str(e))
-
-    def save_commits(self):
-        pass
-
-    def save_languages(self):
-        pass
+    def save_languages(self, languages: Dict[str, float]) -> None:
+        logger.debug("Insert languages into database")
+        collection = self.connection.collection["languages"]
+        recorded_time = datetime.datetime.utcnow()
+        result = collection.insert_one(
+            document={"time": recorded_time, "data": languages}
+        )
+        logger.debug(f"Insertion ID: {result.inserted_id}")

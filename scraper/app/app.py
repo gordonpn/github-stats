@@ -1,22 +1,37 @@
 import logging
 import os
 import time
+from contextlib import ContextDecorator
 from logging.config import fileConfig
+from typing import Any
 
 import schedule
+from dotenv import load_dotenv
 
+from app.healthcheck.healthcheck import HealthCheck, Status
 from app.scraper import scraper
 
 logging.config.fileConfig("logging.ini", disable_existing_loggers=False)
 logger = logging.getLogger("github_scraper")
 
 
-def update_commits() -> None:
+class HealthCheckDecorator(ContextDecorator):
+    def __enter__(self) -> Any:
+        HealthCheck.ping_status(Status.START)
+        return self
+
+    def __exit__(self, type_, value, traceback) -> None:
+        HealthCheck.ping_status(Status.SUCCESS)
+
+
+@HealthCheckDecorator()
+def update_commits() -> Any:
     logger.debug("Running commits update job")
     scraper.run_commits()
 
 
-def update_languages() -> None:
+@HealthCheckDecorator()
+def update_languages() -> Any:
     logger.debug("Running language update job")
     scraper.run_languages()
 
@@ -33,6 +48,7 @@ def run_schedule() -> None:
 
 
 def run() -> None:
+    load_dotenv(verbose=True)
     if "DEV_RUN" in os.environ:
         update_commits()
         update_languages()

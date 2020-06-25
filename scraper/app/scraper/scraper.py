@@ -2,12 +2,14 @@ import logging
 import os
 from collections import OrderedDict
 from datetime import datetime
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set
 
 from backports.zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 from github import Github
 from github.GithubException import GithubException
+
+from app.database.database import Database
 
 logger = logging.getLogger("github_scraper")
 
@@ -53,7 +55,7 @@ class GithubScraper:
         logger.info(f"Returning {language_percentages=}")
         return language_percentages
 
-    def get_commits(self) -> Tuple[OrderedDict[str, int], Dict[int, int]]:
+    def get_commits(self):
         commit_stats_days: OrderedDict[str, int] = OrderedDict(
             {
                 "Sunday": 0,
@@ -65,31 +67,31 @@ class GithubScraper:
                 "Saturday": 0,
             }
         )
-        commit_stats_hours: Dict[int, int] = {
-            0: 0,
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-            5: 0,
-            6: 0,
-            7: 0,
-            8: 0,
-            9: 0,
-            10: 0,
-            11: 0,
-            12: 0,
-            13: 0,
-            14: 0,
-            15: 0,
-            16: 0,
-            17: 0,
-            18: 0,
-            19: 0,
-            20: 0,
-            21: 0,
-            22: 0,
-            23: 0,
+        commit_stats_hours: Dict[str, int] = {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0,
+            "7": 0,
+            "8": 0,
+            "9": 0,
+            "10": 0,
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 0,
+            "15": 0,
+            "16": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0,
         }
         sum_commits: int = 0
         my_names: List[str] = ["gpnn", "Gordon", "Gordon Pham-Nguyen", "gordonpn"]
@@ -112,8 +114,8 @@ class GithubScraper:
                     )
                     this_day: str = get_day_string(local_aware)
                     commit_stats_days[this_day] = commit_stats_days.get(this_day, 0) + 1
-                    commit_stats_hours[local_aware.hour] = (
-                        commit_stats_hours.get(local_aware.hour, 0) + 1
+                    commit_stats_hours[str(local_aware.hour)] = (
+                        commit_stats_hours.get(str(local_aware.hour), 0) + 1
                     )
             except GithubException as e:
                 logger.info(f"{repo.name} {str(e)}")
@@ -126,8 +128,14 @@ class GithubScraper:
 
 
 def run_commits() -> None:
-    pass
+    github = GithubScraper()
+    database = Database()
+    data_days, data_hours = github.get_commits()
+    database.save_commits(days=data_days, hours=data_hours)
 
 
 def run_languages() -> None:
-    pass
+    github = GithubScraper()
+    database = Database()
+    data = github.get_languages()
+    database.save_languages(languages=data)
