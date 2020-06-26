@@ -44,6 +44,9 @@ class GithubScraper:
                 continue
             try:
                 for lang, bytes_of_code in repo.get_languages().items():
+                    if "typescript" in lang.lower() or "javascript" in lang.lower():
+                        lang = "JavaScript/TypeScript"
+
                     sum_of_bytes += bytes_of_code
                     language_stats[lang] = language_stats.get(lang, 0) + bytes_of_code
             except GithubException as e:
