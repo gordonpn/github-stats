@@ -1,5 +1,4 @@
 import logging
-import os
 from logging.config import fileConfig
 
 from dotenv import load_dotenv
@@ -13,7 +12,6 @@ def run():
     logging.config.fileConfig("logging.ini", disable_existing_loggers=False)
     logger = logging.getLogger("backend")
     app = Flask(__name__)
-    debug = "DEV_RUN" in os.environ
     app.register_blueprint(api_v1, url_prefix="/api/v1")
     logger.info("Starting app")
     app.run(debug=False)

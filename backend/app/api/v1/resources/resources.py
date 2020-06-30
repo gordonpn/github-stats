@@ -1,8 +1,10 @@
 import logging
 from logging.config import fileConfig
 
+import pymongo
 from flask import Blueprint, make_response
 from flask_restful import Api, Resource
+from pymongo.cursor import Cursor
 from pymongo.errors import ServerSelectionTimeoutError
 
 from app.api.common import Database
@@ -11,19 +13,37 @@ logging.config.fileConfig("logging.ini", disable_existing_loggers=False)
 logger = logging.getLogger("backend")
 
 
+def set_headers_json(resp):
+    resp.headers["Content-Type"] = "application/json"
+    return resp
+
+
+def get_data(collection):
+    database = Database()
+    collection = database.connection[database.db_name].collection[collection]
+    cursor: Cursor = collection.find().sort("time", pymongo.DESCENDING).limit(1)
+    if cursor is None:
+        resp = make_response({"message": "not found"}, 404)
+        resp = set_headers_json(resp)
+        return resp
+    resp = make_response(cursor[0]["data"], 200)
+    resp = set_headers_json(resp)
+    return resp
+
+
 class Languages(Resource):
     def get(self):
-        return {"Not yet": "implemented"}
+        return get_data("languages")
 
 
 class CommitsDay(Resource):
     def get(self):
-        return {"Not yet": "implemented"}
+        return get_data("commits_per_days")
 
 
 class CommitsHours(Resource):
     def get(self):
-        return {"Not yet": "implemented"}
+        return get_data("commits_per_hours")
 
 
 class HealthCheck(Resource):
@@ -34,11 +54,11 @@ class HealthCheck(Resource):
         except ServerSelectionTimeoutError as e:
             logger.error("Error with healthcheck")
             logger.error(str(e))
-            resp = make_response({"not": "good"}, 500)
-            resp.headers["Content-Type"] = "application/json"
+            resp = make_response({"message": "not good"}, 500)
+            resp = set_headers_json(resp)
             return resp
         resp = make_response({"message": "all good"}, 200)
-        resp.headers["Content-Type"] = "application/json"
+        resp = set_headers_json(resp)
         return resp
 
 

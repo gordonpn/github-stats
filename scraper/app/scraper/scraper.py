@@ -71,16 +71,16 @@ class GithubScraper:
             }
         )
         commit_stats_hours: Dict[str, int] = {
-            "0": 0,
-            "1": 0,
-            "2": 0,
-            "3": 0,
-            "4": 0,
-            "5": 0,
-            "6": 0,
-            "7": 0,
-            "8": 0,
-            "9": 0,
+            "00": 0,
+            "01": 0,
+            "02": 0,
+            "03": 0,
+            "04": 0,
+            "05": 0,
+            "06": 0,
+            "07": 0,
+            "08": 0,
+            "09": 0,
             "10": 0,
             "11": 0,
             "12": 0,
@@ -117,8 +117,11 @@ class GithubScraper:
                     )
                     this_day: str = get_day_string(local_aware)
                     commit_stats_days[this_day] = commit_stats_days.get(this_day, 0) + 1
-                    commit_stats_hours[str(local_aware.hour)] = (
-                        commit_stats_hours.get(str(local_aware.hour), 0) + 1
+                    hours_key = str(local_aware.hour)
+                    if len(hours_key) == 1:
+                        hours_key = f"0{hours_key}"
+                    commit_stats_hours[hours_key] = (
+                        commit_stats_hours.get(hours_key, 0) + 1
                     )
             except GithubException as e:
                 logger.info(f"{repo.name} {str(e)}")
