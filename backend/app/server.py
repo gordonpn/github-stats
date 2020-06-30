@@ -16,4 +16,4 @@ def run():
     debug = "DEV_RUN" in os.environ
     app.register_blueprint(api_v1, url_prefix="/api/v1")
     logger.info("Starting app")
-    app.run(debug=debug)
+    app.run(debug=False)
