@@ -2,6 +2,7 @@
 .idea
 .mypy_cache
 .venv
+.vscode
 pyproject.toml
 venv
 virtualenv
