@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Display interesting GitHub profile developer statistics with charts",
+    "short_name": "GitHub Stats",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
