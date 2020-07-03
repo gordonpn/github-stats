@@ -1,7 +1,6 @@
 import { Flex, Text } from "@chakra-ui/core";
 import React, { ReactElement } from "react";
-import CommitsDays from "@/components/CommitsDays";
-import CommitsHours from "@/components/CommitsHours";
+import CommitsCharts from "@/components/CommitsCharts";
 
 export default function Commits(): ReactElement {
   return (
@@ -22,8 +21,8 @@ export default function Commits(): ReactElement {
         height={["50vh", "25vh"]}
         margin="10vh"
       >
-        <CommitsDays />
-        <CommitsHours />
+        <CommitsCharts type={"hours"} />
+        <CommitsCharts type={"days"} />
       </Flex>
     </>
   );

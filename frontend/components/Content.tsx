@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/core";
 import React, { ReactElement } from "react";
 import GitHubCalendar from "react-github-calendar";
 import ReactTooltip from "react-tooltip";
-import Languages from "@/components/Languages";
+import LanguagesCharts from "@/components/LanguagesCharts";
 import Commits from "@/components/Commits";
 
 export default function Content(): ReactElement {
@@ -23,7 +23,7 @@ export default function Content(): ReactElement {
           <ReactTooltip delayShow={50} html />
         </GitHubCalendar>
       </Flex>
-      <Languages />
+      <LanguagesCharts />
       <Commits />
     </>
   );
