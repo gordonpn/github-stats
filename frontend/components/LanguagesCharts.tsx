@@ -91,9 +91,12 @@ export default function LanguagesCharts(): ReactElement {
   return (
     <>
       <Flex flexDirection="column" width="60vw">
-        <Text>Which languages do I like?</Text>
+        <Text fontSize="xl">Which languages do I like?</Text>
         <Text>
           Here is a breakdown of languages I tend to use in percentages (%).
+        </Text>
+        <Text>
+          Including both <Text as="u"> private and public</Text> repositories.
         </Text>
       </Flex>
       <Flex flexDirection="column" margin="5vh">

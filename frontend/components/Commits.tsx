@@ -6,11 +6,11 @@ export default function Commits(): ReactElement {
   return (
     <>
       <Flex flexDirection="column" width="60vw">
-        <Text>When do I make commits?</Text>
+        <Text fontSize="xl">When do I make commits?</Text>
         <Text>
           I was curious about my own working habits, so here is a breakdown of
-          what time of the day I tend to commit and which day of the week I tend
-          to make commits. Since I started using GitHub.
+          what time of the day and which day of the week I tend to make commits.{" "}
+          <Text as="u">Since I started using GitHub.</Text>
         </Text>
       </Flex>
       <Flex

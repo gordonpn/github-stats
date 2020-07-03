@@ -70,7 +70,7 @@ export default function CommitsCharts(props: Props): ReactElement {
           }
         });
         const updatedState: IState = { ...state };
-        updatedState.datasets[0].label = `Commits per ${type.slice(0, -1)}`;
+        updatedState.datasets[0].label = `Commits on ${type.slice(0, -1)}`;
         updatedState.labels = [...labels];
         updatedState.datasets[0].data = [...chartData];
         // @ts-ignore
