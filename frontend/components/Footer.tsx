@@ -8,8 +8,8 @@ export default function Footer(): ReactElement {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        marginTop="8rem"
-        marginBottom="2rem"
+        marginTop="8vh"
+        marginBottom="5vh"
       >
         <Text fontSize="xs">
           &copy;
