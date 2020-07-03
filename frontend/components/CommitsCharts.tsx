@@ -26,6 +26,16 @@ CommitsCharts.propTypes = {
   type: PropTypes.oneOf(["days", "hours"]).isRequired,
 };
 
+const daysOrder = {
+  Sunday: null,
+  Monday: null,
+  Tuesday: null,
+  Wednesday: null,
+  Thursday: null,
+  Friday: null,
+  Saturday: null,
+};
+
 export default function CommitsCharts(props: Props): ReactElement {
   const { type } = props;
   const [loaded, setLoaded] = useState(false);
@@ -47,9 +57,12 @@ export default function CommitsCharts(props: Props): ReactElement {
   useEffect(() => {
     const fetchData = async () => {
       await axios.get(`/api/v1/commits/${type}`).then((response) => {
-        const data = response.data;
+        let data = response.data;
         const labels: string[] = [];
         const chartData: number[] = [];
+        if (type === "days") {
+          data = Object.assign(daysOrder, data);
+        }
         Object.entries(data).forEach(([key, value]) => {
           if (typeof value === "number") {
             labels.push(key);

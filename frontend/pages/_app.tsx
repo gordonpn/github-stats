@@ -41,10 +41,8 @@ function MyApp({ Component, pageProps }: AppProps): ReactElement {
         <meta name="theme-color" content="#ffffff" />
       </Head>
       <ThemeProvider theme={theme}>
-        <ColorModeProvider>
-          <CSSReset />
-          <Component {...pageProps} />
-        </ColorModeProvider>
+        <CSSReset />
+        <Component {...pageProps} />
       </ThemeProvider>
     </>
   );
