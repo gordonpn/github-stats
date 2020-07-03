@@ -24,7 +24,9 @@
     "next": "9.4.4",
     "react": "16.13.1",
     "react-chartjs-2": "^2.9.0",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "react-github-calendar": "^2.0.1",
+    "react-tooltip": "^4.2.7"
   },
   "devDependencies": {
     "@types/node": "^14.0.14",
