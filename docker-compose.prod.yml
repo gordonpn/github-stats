@@ -2,14 +2,14 @@ version: '3.8'
 services:
 
   mongodb:
-    container_name: github-mongodb
+    container_name: github-stats-mongodb
     expose:
       - 27017
     volumes:
-      - mongodb-github:/data/db
+      - mongodb-github-stats:/data/db
     restart: unless-stopped
     networks:
-      - github-network
+      - github-stats-network
     deploy:
       update_config:
         parallelism: 1
@@ -29,10 +29,10 @@ services:
           - node.labels.main-node == true
 
   scraper:
-    container_name: github-scraper
-    image: gordonpn/github-scraper:latest
+    container_name: github-stats-scraper
+    image: gordonpn/github-stats-scraper:latest
     networks:
-      - github-network
+      - github-stats-network
     restart: unless-stopped
     deploy:
       update_config:
@@ -50,10 +50,10 @@ services:
         window: 120s
 
   backend:
-    container_name: github-backend
-    image: gordonpn/github-backend:latest
+    container_name: github-stats-backend
+    image: gordonpn/github-stats-backend:latest
     networks:
-      - github-network
+      - github-stats-network
     restart: unless-stopped
     expose:
       - 5000
@@ -80,12 +80,12 @@ services:
         window: 120s
 
   frontend:
-    container_name: github-frontend
-    image: gordonpn/github-frontend:latest
+    container_name: github-stats-frontend
+    image: gordonpn/github-stats-frontend:latest
     environment:
       - NODE_ENV=production
     networks:
-      - github-network
+      - github-stats-network
     restart: unless-stopped
     expose:
       - 3000
@@ -114,11 +114,11 @@ services:
         window: 120s
 
   proxy:
-    container_name: github-proxy
-    image: gordonpn/github-proxy:stable
+    container_name: github-stats-proxy
+    image: gordonpn/github-stats-proxy:stable
     networks:
       - traefik-public
-      - github-network
+      - github-stats-network
     restart: unless-stopped
     expose:
       - 80
@@ -152,12 +152,12 @@ services:
 volumes:
   caddy-hotdeals:
     name: caddy-github
-  mongodb-github:
+  mongodb-github-stats:
     external:
-      name: mongodb-github
+      name: mongodb-github-stats
 
 networks:
-  github-network:
+  github-stats-network:
     driver: overlay
   traefik-public:
     external: true

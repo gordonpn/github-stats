@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 COPY --chown=node:node package*.json ./
 USER node
-RUN npm ci --only=production
+RUN npm ci
 RUN npm cache clean --force --loglevel=error
 COPY --chown=node:node . .
 RUN npm run export
