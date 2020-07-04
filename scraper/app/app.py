@@ -26,22 +26,22 @@ class HealthCheckDecorator(ContextDecorator):
 
 @HealthCheckDecorator()
 def update_commits() -> Any:
-    logger.debug("Running commits update job")
+    logger.info("Running commits update job")
     scraper.run_commits()
 
 
 @HealthCheckDecorator()
 def update_languages() -> Any:
-    logger.debug("Running language update job")
+    logger.info("Running language update job")
     scraper.run_languages()
 
 
 def run_schedule() -> None:
-    logger.debug("Setting schedule")
+    logger.info("Setting schedule")
     schedule.every(2).days.do(update_commits)
     schedule.every(3).days.do(update_languages)
 
-    logger.debug("Job pending")
+    logger.info("Job pending")
     while True:
         schedule.run_pending()
         time.sleep(60 * 60)

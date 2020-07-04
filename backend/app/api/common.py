@@ -27,9 +27,7 @@ class Database:
         self.connection = self.connect()
 
     def connect(self):
-        logger.info("Connecting to MongoDB")
         uri: str = f"mongodb://{self.username}:{self.password}@{self.host}:27017/{self.db_name}"
         connection = MongoClient(uri)
         connection[self.db_name].command("ping")
-        logger.info("Connected to MongoDB")
         return connection

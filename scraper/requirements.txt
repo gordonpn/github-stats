@@ -1,6 +1,7 @@
 PyGithub~=1.51
-python-dotenv~=0.13.0
 backports.zoneinfo~=0.2.1
+pymongo~=3.10.1
+python-dotenv~=0.13.0
 requests~=2.24.0
 schedule~=0.6.0
-pymongo~=3.10.1
+tzdata~=2020.1

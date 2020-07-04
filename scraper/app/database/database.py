@@ -25,28 +25,28 @@ class Database:
         self.connection = self.connect()
 
     def connect(self) -> Any:
-        logger.debug("Making connection to mongodb")
+        logger.info("Making connection to mongodb")
         uri: str = f"mongodb://{self.username}:{self.password}@{self.host}:27017/{self.db_name}"
         connection = MongoClient(uri)
         return connection[self.db_name]
 
     def save_commits(self, days, hours: Dict[str, int]) -> None:
-        logger.debug("Insert commits per days")
+        logger.info("Insert commits per days")
         collection = self.connection.collection["commits_per_days"]
         recorded_time = datetime.datetime.utcnow()
         result = collection.insert_one(document={"time": recorded_time, "data": days})
-        logger.debug(f"Insertion ID: {result.inserted_id}")
-        logger.debug("Insert commits per hours")
+        logger.info(f"Insertion ID: {result.inserted_id}")
+        logger.info("Insert commits per hours")
         collection = self.connection.collection["commits_per_hours"]
         recorded_time = datetime.datetime.utcnow()
         result = collection.insert_one(document={"time": recorded_time, "data": hours})
-        logger.debug(f"Insertion ID: {result.inserted_id}")
+        logger.info(f"Insertion ID: {result.inserted_id}")
 
     def save_languages(self, languages: Dict[str, float]) -> None:
-        logger.debug("Insert languages into database")
+        logger.info("Insert languages into database")
         collection = self.connection.collection["languages"]
         recorded_time = datetime.datetime.utcnow()
         result = collection.insert_one(
             document={"time": recorded_time, "data": languages}
         )
-        logger.debug(f"Insertion ID: {result.inserted_id}")
+        logger.info(f"Insertion ID: {result.inserted_id}")
