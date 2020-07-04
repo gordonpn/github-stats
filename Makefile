@@ -9,9 +9,6 @@ start:
 up-mongo:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run --publish=127.0.0.1:27017:27017 mongodb
 
-up-redis:
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run --publish=127.0.0.1:6379:6379 redis
-
 status:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml ps
 

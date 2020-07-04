@@ -2,16 +2,31 @@ version: '3.8'
 services:
 
   mongodb:
-    container_name: github-scraper_mongodb-dev
+    container_name: github-mongodb-dev
     volumes:
       - dev-mongodb-github:/data/db
     ports:
       - "127.0.0.1:27017:27017"
 
-  github-scraper:
+  scraper:
     container_name: github-scraper-dev
     environment:
       - DEV_RUN
+
+  backend:
+    container_name: github-backend-dev
+    ports:
+      - "127.0.0.1:5000:5000"
+
+  frontend:
+    container_name: github-frontend-dev
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  proxy:
+    container_name: github-proxy-dev
+    ports:
+      - "127.0.0.1:4000:80"
 
 volumes:
   dev-mongodb-github:

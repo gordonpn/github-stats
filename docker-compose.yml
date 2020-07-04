@@ -15,7 +15,7 @@ services:
       - ./.docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     restart: unless-stopped
 
-  github-scraper:
+  scraper:
     build:
       context: ./scraper
       dockerfile: Dockerfile
@@ -28,3 +28,35 @@ services:
       - HC_UUID
     depends_on:
       - mongodb
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - TZ=America/Montreal
+      - MONGO_INITDB_DATABASE
+      - MONGO_NON_ROOT_PASSWORD
+      - MONGO_NON_ROOT_USERNAME
+    depends_on:
+      - mongodb
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - TZ=America/Montreal
+    depends_on:
+      - backend
+      - mongodb
+
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    environment:
+      - TZ=America/Montreal
+    depends_on:
+      - frontend
+      - backend

@@ -19,4 +19,5 @@ RUN chown appuser /home/appuser
 WORKDIR /home/appuser
 USER appuser
 COPY . .
+EXPOSE 5000
 CMD ["python", "./main.py"]

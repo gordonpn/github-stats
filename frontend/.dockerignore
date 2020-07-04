@@ -1,0 +1,10 @@
+.babelrc
+.eslintrc.json
+.gitignore
+.stylelintrc
+.idea/
+.next/
+.stylelintrc.json
+.vscode/
+README.md
+node_modules/
