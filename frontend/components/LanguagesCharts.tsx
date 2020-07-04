@@ -81,9 +81,12 @@ export default function LanguagesCharts(): ReactElement {
     if (size.width === undefined) {
       return 350;
     }
-    const chartSize = ~~(size.width * 0.45);
-    if (chartSize <= 500) {
+    if (size.width <= 500) {
       return size.width;
+    }
+    const chartSize = ~~(size.width * 0.4);
+    if (chartSize >= 1000) {
+      return 1000;
     }
     return chartSize;
   };
