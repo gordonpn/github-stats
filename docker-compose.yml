@@ -4,12 +4,12 @@ services:
   mongodb:
     image: mongo:latest
     environment:
-      - MONGO_INITDB_ROOT_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD
       - MONGO_INITDB_DATABASE
+      - MONGO_INITDB_ROOT_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_NON_ROOT_PASSWORD
       - MONGO_NON_ROOT_ROLE=readWrite
       - MONGO_NON_ROOT_USERNAME
-      - MONGO_NON_ROOT_PASSWORD
       - TZ=America/Montreal
     volumes:
       - ./.docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
@@ -20,12 +20,12 @@ services:
       context: ./scraper
       dockerfile: Dockerfile
     environment:
-      - TZ=America/Montreal
+      - GITHUB_TOKEN
+      - HC_UUID
       - MONGO_INITDB_DATABASE
       - MONGO_NON_ROOT_PASSWORD
       - MONGO_NON_ROOT_USERNAME
-      - GITHUB_TOKEN
-      - HC_UUID
+      - TZ=America/Montreal
     depends_on:
       - mongodb
 
@@ -34,10 +34,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      - TZ=America/Montreal
       - MONGO_INITDB_DATABASE
       - MONGO_NON_ROOT_PASSWORD
       - MONGO_NON_ROOT_USERNAME
+      - TZ=America/Montreal
     depends_on:
       - mongodb
 

@@ -49,8 +49,8 @@ def run_schedule() -> None:
 
 def run() -> None:
     load_dotenv(verbose=True)
-    if "DEV_RUN" in os.environ:
-        update_commits()
-        update_languages()
-    else:
+    update_commits()
+    time.sleep(1 * 60)
+    update_languages()
+    if "DEV_RUN" not in os.environ:
         run_schedule()

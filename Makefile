@@ -1,4 +1,4 @@
-.PHONY: help up start up-mongo up-redis status logs restart clean mongo
+.PHONY: help up start up-mongo up-redis status logs restart clean mongo init-db
 
 up:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
@@ -24,3 +24,6 @@ clean:
 
 mongo:
 	docker exec -it github-scraper_mongodb-dev bash
+
+init-db:
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml run --publish=127.0.0.1:27017:27017 mongodb

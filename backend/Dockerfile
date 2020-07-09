@@ -34,4 +34,4 @@ COPY ./uwsgi.ini /etc/uwsgi/uwsgi.ini
 COPY ./supervisord.conf /etc/supervisord.conf
 COPY ./nginx.conf /etc/nginx/nginx.conf
 EXPOSE 5000
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
