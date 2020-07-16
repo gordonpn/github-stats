@@ -18,6 +18,10 @@ interface IDataset {
   hoverBackgroundColor: string[];
 }
 
+interface IResponseData {
+  [key: string]: number;
+}
+
 const round = (value: number, precision: number) => {
   const multiplier = Math.pow(10, precision || 0);
   return Math.round(value * multiplier) / multiplier;
@@ -40,14 +44,14 @@ export default function LanguagesCharts(): ReactElement {
   useEffect(() => {
     const fetchData = async () => {
       await axios.get("/api/v1/languages").then((response) => {
-        const data = response.data;
+        const data: IResponseData = response.data;
         const labels: string[] = [];
         const chartData: number[] = [];
-        Object.entries(data).forEach(([key, value]) => {
-          if (typeof value === "number") {
-            labels.push(key);
-            chartData.push(round(value, 1));
-          }
+        const entries = Object.entries(data);
+        entries.sort((a, b) => a[1] - b[1]);
+        entries.forEach((entry) => {
+          labels.push(entry[0]);
+          chartData.push(round(entry[1], 1));
         });
         const updatedState: IState = { ...state };
         updatedState.labels = [...labels];
