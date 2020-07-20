@@ -36,6 +36,18 @@ const daysOrder = {
   Saturday: null,
 };
 
+const options = {
+  scales: {
+    yAxes: [
+      {
+        ticks: {
+          beginAtZero: true,
+        },
+      },
+    ],
+  },
+};
+
 export default function CommitsCharts(props: Props): ReactElement {
   const { type } = props;
   const [loaded, setLoaded] = useState(false);
@@ -84,7 +96,11 @@ export default function CommitsCharts(props: Props): ReactElement {
 
   return (
     <>
-      {loaded ? <Bar data={state} /> : <Skeleton height="25vh" width="40vw" />}
+      {loaded ? (
+        <Bar data={state} options={options} />
+      ) : (
+        <Skeleton height="25vh" width="40vw" />
+      )}
     </>
   );
 }
