@@ -1,13 +1,18 @@
 import logging
 import os
+import sys
 from collections import OrderedDict
 from datetime import datetime
 from typing import Dict, List, Set
 
-from backports.zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 from github import Github
 from github.GithubException import GithubException
+
+if sys.version_info < (3, 9):
+    from backports.zoneinfo import ZoneInfo
+else:
+    from zoneinfo import ZoneInfo
 
 from app.database.database import Database
 
