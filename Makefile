@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help up start up-mongo up-redis status logs restart clean mongo init-db clean-db
+.PHONY: help up start up-mongo up-redis status logs restart clean mongo init-db clean-db format
 
 up: ## Bring up dev stack with docker compose
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
@@ -35,3 +35,6 @@ clean-db: ## Delete dev db volume and recreate it
 
 help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sed -n 's/^\(.*\): \(.*\)##\(.*\)/\1\3/p' | column -t  -s ' '
+
+format:
+	black -t py38 --exclude "/(\.idea|\.git|\.vscode|\.mypy_cache|\.next|\node_modules|\.venv|\.virtualenv|__pycache__|build|dist)/" .

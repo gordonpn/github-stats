@@ -36,7 +36,7 @@ def get_day_string(date: datetime) -> str:
 class GithubScraper:
     def __init__(self) -> None:
         load_dotenv(verbose=True)
-        self.not_my_repos: List[str] = ["2019", "2020", "cusec.github.io"]
+        self.not_my_repos: List[str] = ["2019", "2020", "cusec.github.io", "inf2050-aut2019-tp"]
         self.g = Github(os.getenv("GITHUB_TOKEN"))
 
     def get_languages(self) -> Dict[str, float]:
@@ -104,7 +104,9 @@ class GithubScraper:
         sum_commits: int = 0
         my_names: List[str] = ["gpnn", "Gordon", "Gordon Pham-Nguyen", "gordonpn"]
         usernames: Set[str] = set()
+        repos: Set[str] = set()
         for repo in self.g.get_user().get_repos():
+            repos.add(repo.name)
             if repo.name in self.not_my_repos:
                 continue
             try:
@@ -132,6 +134,7 @@ class GithubScraper:
                 logger.info(f"{repo.name} {str(e)}")
 
         logger.info(f"Usernames found in commits {usernames}")
+        logger.info(f"Repositories found {repos}")
         logger.info(f"Total number of commits: {sum_commits}")
         logger.info(f"Returning {commit_stats_days=}")
         logger.info(f"Returning {commit_stats_hours=}")
