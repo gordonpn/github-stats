@@ -105,6 +105,11 @@ export default function LanguagesCharts(): ReactElement {
         <Text>
           Including both <Text as="u"> private and public</Text> repositories.
         </Text>
+        <Text>
+          Caveat: it is based on lines of code. Which means that a language with
+          more boilerplate code than others will have a larger percentage
+          attributed to it.
+        </Text>
       </Flex>
       <Flex flexDirection="column" margin="5vh">
         {loaded ? (
