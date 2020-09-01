@@ -33,8 +33,8 @@ clean-db: ## Delete dev db volume and recreate it
 	docker volume rm dev-mongodb-github-stats
 	docker volume create --name=dev-mongodb-github-stats
 
-help:
-	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sed -n 's/^\(.*\): \(.*\)##\(.*\)/\1\3/p' | column -t  -s ' '
+help: ## Show this help
+	@egrep -h '\s##\s' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[33m%-20s\033[0m %s\n", $$1, $$2}'
 
-format:
+format: ## Format Python code using Black
 	black -t py38 --exclude "/(\.idea|\.git|\.vscode|\.mypy_cache|\.next|\node_modules|\.venv|\.virtualenv|__pycache__|build|dist)/" .
