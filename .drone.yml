@@ -39,10 +39,10 @@ steps:
         from_secret: GITHUB_TOKEN
     commands:
       - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL repo https://github.com/gordonpn/github-stats
-      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-backend
-      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-frontend
-      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-proxy
-      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-scraper
+      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL ghcr.io/gordonpn/github-stats-backend
+      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL ghcr.io/gordonpn/github-stats-frontend
+      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL ghcr.io/gordonpn/github-stats-proxy
+      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL ghcr.io/gordonpn/github-stats-scraper
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -56,10 +56,10 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
     commands:
-      - snyk test --docker gordonpn/github-stats-backend:latest --file=Dockerfile --exclude-base-image-vulns
-      - snyk test --docker gordonpn/github-stats-frontend:latest --file=Dockerfile --exclude-base-image-vulns
-      - snyk test --docker gordonpn/github-stats-proxy:latest --file=Dockerfile --exclude-base-image-vulns
-      - snyk test --docker gordonpn/github-stats-scraper:latest --file=Dockerfile --exclude-base-image-vulns
+      - snyk test --docker ghcr.io/gordonpn/github-stats-backend:latest --file=Dockerfile --exclude-base-image-vulns
+      - snyk test --docker ghcr.io/gordonpn/github-stats-frontend:latest --file=Dockerfile --exclude-base-image-vulns
+      - snyk test --docker ghcr.io/gordonpn/github-stats-proxy:latest --file=Dockerfile --exclude-base-image-vulns
+      - snyk test --docker ghcr.io/gordonpn/github-stats-scraper:latest --file=Dockerfile --exclude-base-image-vulns
 
 volumes:
   - name: dockersock

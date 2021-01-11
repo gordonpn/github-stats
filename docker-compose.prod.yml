@@ -1,6 +1,5 @@
-version: '3.8'
+version: "3.8"
 services:
-
   mongodb:
     container_name: github-stats-mongodb
     expose:
@@ -30,7 +29,7 @@ services:
 
   scraper:
     container_name: github-stats-scraper
-    image: gordonpn/github-stats-scraper:stable
+    image: ghcr.io/gordonpn/github-stats-scraper:stable
     networks:
       - github-stats-network
     restart: unless-stopped
@@ -51,7 +50,7 @@ services:
 
   backend:
     container_name: github-stats-backend
-    image: gordonpn/github-stats-backend:stable
+    image: ghcr.io/gordonpn/github-stats-backend:stable
     networks:
       - github-stats-network
     restart: unless-stopped
@@ -81,7 +80,7 @@ services:
 
   frontend:
     container_name: github-stats-frontend
-    image: gordonpn/github-stats-frontend:stable
+    image: ghcr.io/gordonpn/github-stats-frontend:stable
     environment:
       - NODE_ENV=production
     networks:
@@ -115,7 +114,7 @@ services:
 
   proxy:
     container_name: github-stats-proxy
-    image: gordonpn/github-stats-proxy:stable
+    image: ghcr.io/gordonpn/github-stats-proxy:stable
     networks:
       - traefik-public
       - github-stats-network
