@@ -4,82 +4,22 @@ type: docker
 name: notification
 
 trigger:
-  event: [ push, pull_request ]
+  event: [push, pull_request]
 
 steps:
-- name: slack before
-  image: plugins/slack
-  failure: ignore
-  settings:
-    channel: drone-ci
-    template: >
-      {{build.event}} on branch {{build.branch}} from repo {{repo.name}}
-      build #{{build.number}} started
-      {{build.link}}
-    webhook:
-      from_secret: SLACK_WEBHOOK_URL
+  - name: slack before
+    image: plugins/slack
+    failure: ignore
+    settings:
+      channel: drone-ci
+      template: >
+        {{ uppercasefirst build.event }} on branch {{ build.branch }} from repo {{repo.name}}
 
----
-kind: pipeline
-type: docker
-name: build and publish latest
+        Build #{{build.number}} started
 
-platform:
-  os: linux
-  arch: amd64
-
-trigger:
-  event: [ push, pull_request ]
-  branch:
-    exclude: [ master ]
-
-steps:
-- name: publish
-  image: gordonpn/docker-buildx-drone
-  environment:
-    DOCKER_TOKEN:
-      from_secret: DOCKER_TOKEN
-  volumes:
-  - name: dockersock
-    path: /var/run/docker.sock
-  commands:
-  - /drone/src/.docker/scripts/build.sh
-
-volumes:
-- name: dockersock
-  host:
-    path: /var/run/docker.sock
-
----
-kind: pipeline
-type: docker
-name: build and publish stable
-
-platform:
-  os: linux
-  arch: amd64
-
-trigger:
-  event: [ push, pull_request ]
-  branch: [ master ]
-
-steps:
-- name: publish
-  image: gordonpn/docker-buildx-drone
-  environment:
-    DOCKER_TOKEN:
-      from_secret: DOCKER_TOKEN
-    DOCKER_TAG: stable
-  volumes:
-  - name: dockersock
-    path: /var/run/docker.sock
-  commands:
-  - /drone/src/.docker/scripts/build.sh
-
-volumes:
-- name: dockersock
-  host:
-    path: /var/run/docker.sock
+        <{{ build.link }}|Visit build page ➡️>
+      webhook:
+        from_secret: SLACK_WEBHOOK_URL
 
 ---
 kind: pipeline
@@ -87,47 +27,44 @@ type: docker
 name: security
 
 trigger:
-  event: [ push, pull_request ]
-  branch: [ develop ]
-
-depends_on:
-- build and publish latest
+  event: [push, pull_request]
+  branch: [develop]
 
 steps:
-- name: trivy scan
-  image: docker
-  failure: ignore
-  environment:
-    GITHUB_TOKEN:
-      from_secret: GITHUB_TOKEN
-  commands:
-    - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL repo https://github.com/gordonpn/github-stats
-    - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-backend
-    - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-frontend
-    - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-proxy
-    - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-scraper
-  volumes:
-    - name: dockersock
-      path: /var/run/docker.sock
-- name: snyk scan
-  image: gordonpn/snyk-cli-drone
-  failure: ignore
-  environment:
-    SNYK_TOKEN:
-      from_secret: SNYK_TOKEN
-  volumes:
-  - name: dockersock
-    path: /var/run/docker.sock
-  commands:
-  - snyk test --docker gordonpn/github-stats-backend:latest --file=Dockerfile --exclude-base-image-vulns
-  - snyk test --docker gordonpn/github-stats-frontend:latest --file=Dockerfile --exclude-base-image-vulns
-  - snyk test --docker gordonpn/github-stats-proxy:latest --file=Dockerfile --exclude-base-image-vulns
-  - snyk test --docker gordonpn/github-stats-scraper:latest --file=Dockerfile --exclude-base-image-vulns
+  - name: trivy scan
+    image: docker
+    failure: ignore
+    environment:
+      GITHUB_TOKEN:
+        from_secret: GITHUB_TOKEN
+    commands:
+      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL repo https://github.com/gordonpn/github-stats
+      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-backend
+      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-frontend
+      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-proxy
+      - docker run aquasec/trivy --ignore-unfixed --no-progress --exit-code 1 --severity CRITICAL gordonpn/github-stats-scraper
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+  - name: snyk scan
+    image: gordonpn/snyk-cli-drone
+    failure: ignore
+    environment:
+      SNYK_TOKEN:
+        from_secret: SNYK_TOKEN
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+    commands:
+      - snyk test --docker gordonpn/github-stats-backend:latest --file=Dockerfile --exclude-base-image-vulns
+      - snyk test --docker gordonpn/github-stats-frontend:latest --file=Dockerfile --exclude-base-image-vulns
+      - snyk test --docker gordonpn/github-stats-proxy:latest --file=Dockerfile --exclude-base-image-vulns
+      - snyk test --docker gordonpn/github-stats-scraper:latest --file=Dockerfile --exclude-base-image-vulns
 
 volumes:
-- name: dockersock
-  host:
-    path: /var/run/docker.sock
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
 
 ---
 kind: pipeline
@@ -135,38 +72,58 @@ type: docker
 name: deploy
 
 trigger:
-  event: [ push ]
-  branch: [ master ]
-
-depends_on:
-  - build and publish stable
+  event:
+    - promote
+  target:
+    - production
 
 steps:
-- name: deploy prod
-  image: docker/compose:1.26.2
-  environment:
-    TZ: America/Montreal
-    GITHUB_TOKEN:
-      from_secret: GITHUB_TOKEN
-    MONGO_INITDB_DATABASE:
-      from_secret: MONGO_INITDB_DATABASE
-    MONGO_INITDB_ROOT_PASSWORD:
-      from_secret: MONGO_INITDB_ROOT_PASSWORD
-    MONGO_INITDB_ROOT_USERNAME:
-      from_secret: MONGO_INITDB_ROOT_USERNAME
-    MONGO_NON_ROOT_PASSWORD:
-      from_secret: MONGO_NON_ROOT_PASSWORD
-    MONGO_NON_ROOT_USERNAME:
-      from_secret: MONGO_NON_ROOT_USERNAME
-    HC_UUID:
-      from_secret: HC_UUID
-  volumes:
-  - name: dockersock
-    path: /var/run/docker.sock
-  commands:
-  - /drone/src/.docker/scripts/deploy.sh
+  - name: deploy prod
+    image: docker/compose:1.26.2
+    environment:
+      TZ: America/Montreal
+      GITHUB_TOKEN:
+        from_secret: GITHUB_TOKEN
+      MONGO_INITDB_DATABASE:
+        from_secret: MONGO_INITDB_DATABASE
+      MONGO_INITDB_ROOT_PASSWORD:
+        from_secret: MONGO_INITDB_ROOT_PASSWORD
+      MONGO_INITDB_ROOT_USERNAME:
+        from_secret: MONGO_INITDB_ROOT_USERNAME
+      MONGO_NON_ROOT_PASSWORD:
+        from_secret: MONGO_NON_ROOT_PASSWORD
+      MONGO_NON_ROOT_USERNAME:
+        from_secret: MONGO_NON_ROOT_USERNAME
+      HC_UUID:
+        from_secret: HC_UUID
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+    commands:
+      - /drone/src/.docker/scripts/deploy.sh
+  - name: slack notification
+    image: plugins/slack
+    failure: ignore
+    settings:
+      channel: drone-ci
+      webhook:
+        from_secret: SLACK_WEBHOOK_URL
+      template: >
+        {{#if build.pull }}
+          *{{#success build.status}}✔{{ else }}✘{{/success}} {{ uppercasefirst build.status }}*: <https://github.com/{{ repo.owner }}/{{ repo.name }}/pull/{{ build.pull }}|Pull Request #{{ build.pull }}>
+        {{else}}
+          *{{#success build.status}}✔{{ else }}✘{{/success}} {{ uppercasefirst build.status }}: Build #{{ build.number }}* (type: `{{ build.event }}`)
+        {{/if}}
+
+        Commit: <https://github.com/{{ repo.owner }}/{{ repo.name }}/commit/{{ build.commit }}|{{ truncate build.commit 8 }}>
+
+        Branch: <https://github.com/{{ repo.owner }}/{{ repo.name }}/commits/{{ build.branch }}|{{ build.branch }}>
+
+        Author: {{ build.author }}
+
+        <{{ build.link }}|Visit build page ➡️>
 
 volumes:
-- name: dockersock
-  host:
-    path: /var/run/docker.sock
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
