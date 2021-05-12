@@ -20,7 +20,7 @@
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
     "axios": "^0.21.1",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "cross-fetch": "^3.0.6",
     "emotion-theming": "^10.0.27",
     "next": "9.4.4",
