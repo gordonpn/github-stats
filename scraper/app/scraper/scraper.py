@@ -36,7 +36,7 @@ def get_day_string(date: datetime) -> str:
 class GithubScraper:
     def __init__(self) -> None:
         load_dotenv(verbose=True)
-        self.not_my_repos: List[str] = ["2019", "2020", "cusec.github.io", "inf2050-aut2019-tp"]
+        self.not_my_repos: List[str] = ["2019", "2020", "cusec.github.io", "inf2050-aut2019-tp", "jetbrains-reset-trial-evaluation-mac"]
         self.g = Github(os.getenv("GITHUB_TOKEN"))
 
     def get_languages(self) -> Dict[str, float]:
